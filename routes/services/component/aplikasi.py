@@ -1,12 +1,9 @@
 import os
-import shutil
-from PIL import Image
 from asyncio.windows_events import NULL
 from sqlalchemy.exc import IntegrityError
-from repository.services.applikasi_repo import info_aplikasi, info_aplikasi_byid, inser_apps
+from repository.services.component.applikasi_repo import del_apps, info_aplikasi, info_aplikasi_byid, inser_apps
 from fastapi import APIRouter, File, UploadFile, Depends
-from fastapi.responses import FileResponse
-from schemas.aplikasi import Apps
+from schemas.aplikasi import Apps, Apps_update
 
 apps = APIRouter()
 
@@ -37,13 +34,38 @@ async def get_id_apps(id_aplikasi: int):
 
 
 @apps.post("/post_app", tags=["apps_detail"])
-async def post_jabatan(logo: UploadFile = File(...), app: Apps = Depends()):
+async def post_apps(logo: UploadFile = File(...), app: Apps = Depends()):
     try:
-        file_name = f'{app.id_aplikasi}.png'
-        with open(f'logoaplikasi/{app.nama_aplikasi}.png', 'wb') as buffer:
+        file_name = f'logoaplikasi/{app.id_aplikasi}.png'
+        with open(file_name, 'wb') as buffer:
             buffer.write(logo.file.read())
         # data_db = app.dict()
         inser_apps(app, file_name)
         return {'message': 'Berhasil insert data', 'status': 1}
     except IntegrityError:
         return {'message': 'GAGAL- tidak boleh ada data duplicate', 'status': 0}
+
+
+@apps.put("/update_aplikasi/{id_aplikasi}", tags=["apps_detail"])
+async def update_aplikasi(app: Apps_update, id_aplikasi: int, logo: UploadFile = File(None)):
+    pass
+
+
+@apps.delete("/deleteApp/{id_aplikasi}", tags=["apps_detail"])
+async def delete_apps(id_aplikasi: int):
+    if os.path.exists(f'logoaplikasi/{id_aplikasi}.png'):
+        delete = del_apps(id_aplikasi)
+        os.remove(f'logoaplikasi/{id_aplikasi}.png')
+        if delete == 1:
+            message = {
+                'message': 'data berhasil di delete dan file berhasil di hapus'}
+        else:
+            message = {
+                'message': 'data gagal di delete tapi file berhasil di hapus'}
+    else:
+        delete = del_apps(id_aplikasi)
+        if delete == 1:
+            message = {'message': 'data berhasil di delete file tidak ada'}
+        else:
+            message = {'message': 'data gagal di delete tapi file tidak ada'}
+    return message
