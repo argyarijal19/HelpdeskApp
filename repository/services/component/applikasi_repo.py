@@ -25,11 +25,17 @@ def inser_apps(app: Apps, filename: str):
 
 
 def update_apps(app: Apps_update, id_aplikasi: int, filename: str):
-    putData = conn.execute(app.update().values(
-        id_aplikasi=app.id_aplikasi,
+    putData = conn.execute(apps.update().values(
         nama_aplikasi=app.nama_aplikasi,
         logo_aplikasi=filename
-    ).where(app.c.id_aplikasi == id_aplikasi))
+    ).where(apps.c.id_aplikasi == id_aplikasi))
+    return putData.rowcount
+
+
+def update_apps_noIm(app: Apps_update, id_aplikasi: int):
+    putData = conn.execute(apps.update().values(
+        nama_aplikasi=app.nama_aplikasi
+    ).where(apps.c.id_aplikasi == id_aplikasi))
     return putData.rowcount
 
 

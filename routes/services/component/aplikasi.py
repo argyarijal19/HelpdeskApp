@@ -1,7 +1,8 @@
 import os
+from typing import Optional
 from asyncio.windows_events import NULL
 from sqlalchemy.exc import IntegrityError
-from repository.services.component.applikasi_repo import del_apps, info_aplikasi, info_aplikasi_byid, inser_apps
+from repository.services.component.applikasi_repo import del_apps, info_aplikasi, info_aplikasi_byid, inser_apps, update_apps, update_apps_noIm
 from fastapi import APIRouter, File, UploadFile, Depends
 from schemas.aplikasi import Apps, Apps_update
 
@@ -47,8 +48,28 @@ async def post_apps(logo: UploadFile = File(...), app: Apps = Depends()):
 
 
 @apps.put("/update_aplikasi/{id_aplikasi}", tags=["apps_detail"])
-async def update_aplikasi(app: Apps_update, id_aplikasi: int, logo: UploadFile = File(None)):
-    pass
+async def update_aplikasi(id_aplikasi: int, app: Apps_update = Depends(), logo: UploadFile = File(None)):
+    try:
+        if logo:
+            file_name = f'logoaplikasi/{id_aplikasi}.png'
+            if os.path.exists(file_name):
+                os.remove(file_name)
+                with open(file_name, 'wb') as buffer:
+                    buffer.write(logo.file.read())
+                update = update_apps(app, id_aplikasi, file_name)
+                if update == 1:
+                    message = {'message': 'berhasil Update data!', 'status': 1}
+                else:
+                    message = {'message': 'Gagal Update Data', 'status': 0}
+        else:
+            update = update_apps_noIm(app, id_aplikasi)
+            if update == 1:
+                message = {'message': 'berhasil Update data!', 'status': 1}
+            else:
+                message = {'message': 'Gagal Update Data', 'status': 0}
+        return message
+    except:
+        pass
 
 
 @apps.delete("/deleteApp/{id_aplikasi}", tags=["apps_detail"])
@@ -58,14 +79,16 @@ async def delete_apps(id_aplikasi: int):
         os.remove(f'logoaplikasi/{id_aplikasi}.png')
         if delete == 1:
             message = {
-                'message': 'data berhasil di delete dan file berhasil di hapus'}
+                'message': 'data berhasil di delete dan file berhasil di hapus', 'status': 1}
         else:
             message = {
-                'message': 'data gagal di delete tapi file berhasil di hapus'}
+                'message': 'data gagal di delete tapi file berhasil di hapus', 'status': 0}
     else:
         delete = del_apps(id_aplikasi)
         if delete == 1:
-            message = {'message': 'data berhasil di delete file tidak ada'}
+            message = {
+                'message': 'data berhasil di delete file tidak ada', 'status': 1}
         else:
-            message = {'message': 'data gagal di delete tapi file tidak ada'}
+            message = {
+                'message': 'data gagal di delete tapi file tidak ada', 'status': 0}
     return message
