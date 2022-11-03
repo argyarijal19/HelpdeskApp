@@ -5,25 +5,25 @@ from schemas.user import User
 from models.index import users
 
 
-def user_info():
+def user_info() -> list:
     query = "SELECT users.id_user, users.id_jabatan, jabatan.nama_jabatan as jabatan, users.id_role, role.nama_role as role, users.nama_lengkap, users.email, users.password FROM users JOIN jabatan ON users.id_jabatan=jabatan.id_jabatan JOIN role ON role.id_role=users.id_role"
     data = conn.execute(query).fetchall()
     return data
 
 
-def staff():
-    query = f'SELECT users.id_user, users.id_jabatan, jabatan.nama_jabatan as jabatan, users.id_role, role.nama_role as role, users.nama_lengkap, users.email, users.password FROM users JOIN jabatan ON users.id_jabatan=jabatan.id_jabatan JOIN role ON role.id_role=users.id_role WHERE role.id_role = 20'
+def staff(id_role: int) -> list:
+    query = f'SELECT users.id_user, users.id_jabatan, jabatan.nama_jabatan as jabatan, users.id_role, role.nama_role as role, users.nama_lengkap, users.email, users.password FROM users JOIN jabatan ON users.id_jabatan=jabatan.id_jabatan JOIN role ON role.id_role=users.id_role WHERE role.id_role = {id_role}'
     data = conn.execute(query).fetchall()
     return data
 
 
-def user_info_byid(id_user: int):
+def user_info_byid(id_user: int) -> list:
     query = f"SELECT  users.id_user, users.id_jabatan, jabatan.nama_jabatan as jabatan, users.id_role, role.nama_role as role, users.nama_lengkap, users.email, users.password FROM users JOIN jabatan ON users.id_jabatan=jabatan.id_jabatan JOIN role ON role.id_role=users.id_role WHERE id_user = {id_user}"
     data = conn.execute(query).fetchall()
     return data
 
 
-def total_row():
+def total_row() -> int:
     query = "SELECT COUNT(id_user) FROM users"
     maxrow = conn.execute(query).fetchone()[0] + 1
     return maxrow
@@ -46,7 +46,7 @@ def post_data_user(user: User):
     return postData
 
 
-def put_data(id_user: int, user: User):
+def put_data(id_user: int, user: User) -> int:
     putData = conn.execute(users.update().values(
         id_jabatan=user.id_jabatan,
         id_role=user.id_role,
@@ -57,6 +57,6 @@ def put_data(id_user: int, user: User):
     return putData.rowcount
 
 
-def delete_user(id_user: int):
+def delete_user(id_user: int) -> int:
     delete = conn.execute(users.delete().where(users.c.id_user == id_user))
     return delete.rowcount

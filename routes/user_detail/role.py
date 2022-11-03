@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter
-from repository.componen_user.role_repo import all_role, role_insert, role_byid
+from repository.componen_user.role_repo import *
 from schemas.role import Role, Update_role
 
 role = APIRouter()

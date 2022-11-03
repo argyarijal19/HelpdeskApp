@@ -3,12 +3,12 @@ from models.index import role
 from schemas.role import Role, Update_role
 
 
-def all_role():
+def all_role() -> list:
     data = conn.execute(role.select()).fetchall()
     return data
 
 
-def role_byid(id_role: int):
+def role_byid(id_role: int) -> list:
     data_role = role.select().where(role.c.id_role == id_role)
     data = conn.execute(data_role).fetchall()
     return data
@@ -22,7 +22,7 @@ def role_insert(roles: Role):
     return postData
 
 
-def role_update(id_role, roles: Update_role):
+def role_update(id_role, roles: Update_role) -> int:
     updateData = conn.execute(role.update(). values(
         nama_role=roles.nama_role
     ))

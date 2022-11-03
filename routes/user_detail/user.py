@@ -34,12 +34,12 @@ async def get_user_byID(id_user: int):
     return message
 
 
-@user.get("/user_staff", tags=["users_detail"])
-async def user_staff():
-    data = staff()
+@user.get("/user_by_role", tags=["users_detail"])
+async def user_staff(id_role: int):
+    data = staff(id_role)
     if data:
         message = {'message': 'sucess',
-                   'data': data, 'status': 0}
+                   'data': data, 'status': 1}
     else:
         message = {'message': f'staff belum ada',
                    'data': NULL, 'status': 0}
@@ -57,8 +57,8 @@ async def write_data(user: User):
             return {'message': 'email harus menggunakan format @email atau @ulbi', 'status': 0}
     except IntegrityError:
         return {'message': 'GAGAL - Data jabatan atau role tidak sesuai', 'status': 0}
-    except:
-        return {'message': 'GAGAL - ada kesalahan saat menginputkan data', 'status': 0}
+    except Exception as e:
+        return {'message': str(e), 'status': 0}
 
 
 @user.put("/put_user/{id_user}", tags=["users_detail"])

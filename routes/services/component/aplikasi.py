@@ -2,7 +2,7 @@ import os
 from typing import Optional
 from asyncio.windows_events import NULL
 from sqlalchemy.exc import IntegrityError
-from repository.services.component.applikasi_repo import del_apps, info_aplikasi, info_aplikasi_byid, inser_apps, update_apps, update_apps_noIm
+from repository.services.component.applikasi_repo import *
 from fastapi import APIRouter, File, UploadFile, Depends
 from schemas.aplikasi import Apps, Apps_update
 

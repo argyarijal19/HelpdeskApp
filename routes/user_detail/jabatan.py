@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from sqlalchemy.exc import IntegrityError, OperationalError
 from fastapi import APIRouter
-from repository.componen_user.jabatan_repo import del_jabatan, jabatan_all, jabatan_byid, insert_jabatan, update_jabatan
+from repository.componen_user.jabatan_repo import *
 from schemas.jabatan import Jabatan, Update_jabatan
 
 job = APIRouter()
@@ -20,7 +20,7 @@ async def get_jabatan():
     return message
 
 
-@job.get("/id_jabatan/{id_id_jabatan}", tags=["jabatan_detail"])
+@job.get("/id_jabatan/{id_jabatan}", tags=["jabatan_detail"])
 async def get_job_byID(id_jabatan: int):
     data = jabatan_byid(id_jabatan)
     if data:
@@ -45,7 +45,7 @@ async def post_jabatan(jabatan: Jabatan):
 @job.put("/update_jabatan", tags=["jabatan_detail"])
 async def update(id_jabatan: int, jabatan: Update_jabatan):
     putData = update_jabatan(id_jabatan, jabatan)
-    if putData:
+    if putData == 1:
         message = {'message': 'Data berhasil di update', 'status': 1}
     else:
         message = {

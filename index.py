@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from routes.index import user, job, role, apps
+from routes.index import user, job, role, apps, jt
 from fastapi.responses import JSONResponse
 import uvicorn
 
@@ -18,6 +18,7 @@ app.include_router(job)
 app.include_router(user)
 app.include_router(role)
 app.include_router(apps)
+app.include_router(jt)
 
 if __name__ == '__main__':
     uvicorn.run('index:app', reload=True)
