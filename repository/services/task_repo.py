@@ -1,5 +1,7 @@
 from models.index import complain
 from config.db import conn
+from schemas.task import *
+from models.index import complain
 
 
 def all_task_no_staff() -> list:
@@ -30,3 +32,35 @@ def all_task_bystaff(id_staff: int) -> list:
     query = f'SELECT ts.id_user_comp, ts.id_user_staff,  up.id_jabatan, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain, up.nama_lengkap as user_staff, ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN users up ON up.id_user=ts.id_user_staff JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi WHERE ts.id_user_staff = {id_staff}'
     data = conn.execute(query).fetchall()
     return data
+
+
+def all_task_byuser_and_ns(id_user: int) -> list:
+    query = f'SELECT ts.id_user_comp, ts.id_user_staff,  us.id_jabatan, jt.id_jenis_task, jt.jenis_task, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain,  ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi JOIN jenis_task jt ON jt.id_jenis_task=ts.id_jenis_task WHERE ts.id_user_staff is null AND ts.id_user_comp = {id_user}'
+    data = conn.execute(query).fetchall()
+    return data
+
+
+def all_task_byuser_ws(id_user: int) -> list:
+    query = f'SELECT ts.id_user_comp, ts.id_user_staff,  up.id_jabatan, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain, up.nama_lengkap as user_staff, ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN users up ON up.id_user=ts.id_user_staff JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi WHERE ts.id_user_comp = {id_user}'
+    data = conn.execute(query).fetchall()
+    return data
+
+
+def all_task_byuser_done(id_user: int) -> list:
+    query = f"SELECT ts.id_user_comp, ts.id_user_staff,  up.id_jabatan, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain, up.nama_lengkap as user_staff, ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN users up ON up.id_user=ts.id_user_staff JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi WHERE ts.id_user_comp = {id_user} AND ts.status = '2'"
+    data = conn.execute(query).fetchall()
+    return data
+
+
+def all_task_bystaff_done(id_staff: int) -> list:
+    query = f"SELECT ts.id_user_comp, ts.id_user_staff,  up.id_jabatan, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain, up.nama_lengkap as user_staff, ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN users up ON up.id_user=ts.id_user_staff JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi WHERE ts.id_user_staff = {id_staff} AND ts.status = '2'"
+    data = conn.execute(query).fetchall()
+    return data
+
+
+def update_task_staff_dl(task: Task_staff, id_task: int) -> int:
+    putData = conn.execute(complain.update().values(
+        id_user_staff=task.id_user_staff,
+        date_done=task.date_done
+    ).where(complain.c.id_task == id_task))
+    return putData.rowcount
