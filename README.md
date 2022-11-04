@@ -16,3 +16,8 @@ endpoint yang tersedia adalah:
    3. /put_jabatan/id_jabata
    4. /post_jabatan
    5. /delete_jabatan
+
+UNTUK MENAMPILKAN TASK YANG BARU MASUK DAN BELUM DI TANGANI:
+
+1.  /all_task_ns
+    maka ketika task tersebut di tangan atau di update akan otomatis task tersebut hilang

@@ -1,5 +1,4 @@
-from sqlalchemy import Table, Column, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Table, Column
 from sqlalchemy.sql.sqltypes import Integer, String
 from config.db import meta
 
