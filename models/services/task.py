@@ -2,7 +2,6 @@ from sqlalchemy import Table, Column, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import Integer, Enum
 from models.index import users, apps, jenis_task
-from schemas.status import Status
 from config.db import meta
 import datetime
 
@@ -15,7 +14,7 @@ complain = Table(
     Column('id_aplikasi', Integer, ForeignKey(apps.c.id_aplikasi)),
     Column('id_jenis_task', Integer, ForeignKey(jenis_task.c.id_jenis_task)),
     Column('status', Enum),
-    Column('priority', Enum(Status), default=Status.ONPROSES),
+    Column('priority', Integer),
     Column('rating', Integer),
     Column('date_input', DateTime, default=datetime.datetime.utcnow),
     Column('date_done', DateTime)

@@ -4,6 +4,12 @@ from schemas.task import *
 from models.index import complain
 
 
+def get_rating_staff(id_staff: int) -> list:
+    query = f"SELECT AVG(rating) AS rating FROM task WHERE id_user_staff = {id_staff} GROUP BY id_user_staff;"
+    data = conn.execute(query).fetchall()
+    return data
+
+
 def all_task_no_staff() -> list:
     query = "SELECT ts.id_user_comp, ts.id_user_staff,  us.id_jabatan, jt.id_jenis_task, jt.jenis_task, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain,  ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi JOIN jenis_task jt ON jt.id_jenis_task=ts.id_jenis_task WHERE ts.id_user_staff is null ORDER BY ts.priority DESC"
     data = conn.execute(query).fetchall()
@@ -61,6 +67,22 @@ def all_task_bystaff_done(id_staff: int) -> list:
 def update_task_staff_dl(task: Task_staff, id_task: int) -> int:
     putData = conn.execute(complain.update().values(
         id_user_staff=task.id_user_staff,
+        status='1',
         date_done=task.date_done
     ).where(complain.c.id_task == id_task))
     return putData.rowcount
+
+
+def update_task_rating(task: Task_rating, id_task: int) -> int:
+    putData = conn.execute(complain.update().values(
+        id_user_comp=task.id_user_comp,
+        status='2',
+        rating=task.rating
+    ).where(complain.c.id_task == id_task))
+    return putData.rowcount
+
+
+def delete_task(id_task: int) -> int:
+    delete = conn.execute(complain.delete().where(
+        complain.c.id_task == id_task))
+    return delete.rowcount
