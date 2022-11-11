@@ -1,7 +1,7 @@
 from models.index import complain
 from config.db import conn
 from schemas.task import *
-from models.index import complain
+from repository.user.user_repo import user_info_byid
 
 
 def get_rating_staff(id_staff: int) -> list:
@@ -80,6 +80,19 @@ def update_task_rating(task: Task_rating, id_task: int) -> int:
         rating=task.rating
     ).where(complain.c.id_task == id_task))
     return putData.rowcount
+
+
+def post_task(task: Task):
+    id_jabatan = user_info_byid(task.id_user_comp)
+    aplikasi = task.id_aplikasi
+    priority = (id_jabatan[0]["id_jabatan"] + aplikasi) / 2
+    postData = conn.execute(complain.insert().values(
+        id_user_comp=task.id_user_comp,
+        id_aplikasi=task.id_aplikasi,
+        id_jenis_task=task.id_jenis_task,
+        priority=priority
+    ))
+    return postData
 
 
 def delete_task(id_task: int) -> int:

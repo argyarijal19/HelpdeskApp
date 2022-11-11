@@ -156,18 +156,34 @@ async def put_staff_dl(task: Task_staff, id_task: int):
 @task.put("/update_task_rating", tags=["Services"])
 async def put_rating(task: Task_rating, id_task: int):
     data_task = all_task_with_staff_byid(id_task)
-    if task.id_user_comp == data_task[0]["id_user_comp"]:
-        update = update_task_rating(task, id_task)
-        if update == 1:
-            message = {'message': 'update data successs', 'status': 1}
+    if data_task:
+        if task.id_user_comp == data_task[0]["id_user_comp"]:
+            if data_task[0]["status"] == '1':
+                update = update_task_rating(task, id_task)
+                if update == 1:
+                    message = {'message': 'update data successs', 'status': 1}
+                else:
+                    message = {
+                        'message': 'update data gagal - id_user tidak sesuai', 'status': 0}
+            else:
+                message = {
+                    'message': 'update data gagal - task belum di selesaikan', 'status': 0}
         else:
             message = {
-                'message': 'update data gagal - id_user tidak sesuai', 'status': 0}
+                'message': 'update data gagal - ini bukan task yang anda masukan', 'status': 0}
     else:
         message = {
-            'message': 'update data gagal - ini bukan task yang anda masukan', 'status': 0}
-
+            'message': 'update data gagal - task belum di proses', 'status': 0}
     return message
+
+
+@task.post("/post_task", tags=["Services"])
+async def post_data(task: Task):
+    try:
+        post_task(task)
+        return {'message': 'Berhasil insert data', 'status': 1}
+    except IntegrityError:
+        return {'message': 'GAGAL- id_aplikasi tidak sesuai', 'status': 0}
 
 
 @task.delete("/delete_task/{id_task}", tags=['Services'])

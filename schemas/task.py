@@ -7,7 +7,6 @@ class Task(BaseModel):
     id_aplikasi: int
     id_jenis_task: int
     priority: int
-    date_input: date
 
 
 class Task_staff(BaseModel):
