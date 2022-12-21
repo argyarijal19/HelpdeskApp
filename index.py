@@ -3,9 +3,26 @@ from fastapi.staticfiles import StaticFiles
 from routes.index import user, job, role, apps, jt, task
 from fastapi.responses import JSONResponse
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(title="HelpDesk App - API")
 app.mount("/static", StaticFiles(directory="logoaplikasi"), name="logoaplikasi")
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(Exception)
