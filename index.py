@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from routes.index import user, job, role, apps, jt, task
+from routes.index import user, job, role, apps, jt, task, login
 from fastapi.responses import JSONResponse
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,10 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(title="HelpDesk App - API")
 app.mount("/static", StaticFiles(directory="logoaplikasi"), name="logoaplikasi")
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:3000",
+    "http://localhost:3002",
+    "localhost:3002"
 ]
 
 
@@ -21,7 +19,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
@@ -37,6 +35,7 @@ app.include_router(role)
 app.include_router(apps)
 app.include_router(jt)
 app.include_router(task)
+app.include_router(login)
 
 if __name__ == '__main__':
     uvicorn.run('index:app', reload=True)

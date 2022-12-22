@@ -1,10 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sqlalchemy.exc import IntegrityError
 from asyncio.windows_events import NULL
 from repository.services.task_repo import *
 from schemas.task import *
 from repository.user.user_repo import staff
 from repository.user.user_repo import staff, user_info_byid
+from repository.auth.auth_bearer import JWTBearer
 
 
 task = APIRouter()
@@ -130,6 +131,17 @@ async def get_rating_for_staff(id_staff: int):
             return rate_data
         else:
             return {'rating': 0}
+    else:
+        return {'message': 'id bukan terdaftar sebagai staff'}
+
+
+@task.get("/get_all_staff_rate", tags=["Services"])
+async def get_rating_for_allstaff():
+    rate_data = get_all_rating_staff()
+    data_staff = staff(20)
+    id_user_staff = []
+    if rate_data:
+        return rate_data
     else:
         return {'message': 'id bukan terdaftar sebagai staff'}
 

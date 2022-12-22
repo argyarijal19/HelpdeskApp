@@ -10,6 +10,12 @@ def get_rating_staff(id_staff: int) -> list:
     return data
 
 
+def get_all_rating_staff() -> list:
+    query = f"SELECT AVG(t.rating) AS rating, u.nama_lengkap, COUNT(t.rating) as jumlah_task FROM task t JOIN users u ON t.id_user_staff=u.id_user GROUP BY id_user_staff;"
+    data = conn.execute(query).fetchall()
+    return data
+
+
 def all_task_no_staff() -> list:
     query = "SELECT ts.id_user_comp, ts.id_user_staff,  us.id_jabatan, jt.id_jenis_task, jt.jenis_task, ts.id_aplikasi,ap.nama_aplikasi, ap.logo_aplikasi, us.nama_lengkap as user_complain,  ts.status, ts.priority, ts.rating, ts.date_input, ts.date_done FROM users us JOIN task ts ON us.id_user=ts.id_user_comp JOIN aplikasi ap ON ap.id_aplikasi=ts.id_aplikasi JOIN jenis_task jt ON jt.id_jenis_task=ts.id_jenis_task WHERE ts.id_user_staff is null ORDER BY ts.priority DESC"
     data = conn.execute(query).fetchall()
